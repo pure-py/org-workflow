@@ -1,6 +1,4 @@
 ORG := pure-py
-# Repository with the submission workflow
-SUBMISSION_REPO := pure-py-spec
 PROJECT := 1
 # Statuses whose issues must have a milestone
 ACTIVE := In progress,Awaiting Review
@@ -17,6 +15,6 @@ integrity.txt:
 
 ## Status page
 status.html: dependencies.svg integrity.txt
-	uv run --locked python script/status-page.py $(ORG) $(SUBMISSION_REPO) .. integrity.txt > $@
+	uv run --locked python script/status-page.py $(ORG) .. integrity.txt > $@
 
 .PHONY: default dependencies.svg integrity.txt status.html

@@ -14,7 +14,6 @@ permissions:
 
 env:
   ORG: ${{ github.repository_owner }}
-  SUBMISSION_REPO: pure-py-spec  # Repository with the submission workflow
 
 jobs:
   status:
@@ -51,7 +50,7 @@ jobs:
       - name: Build page
         env:
           GH_TOKEN: ${{ github.token }}
-        run: python3 script/status-page.py "$ORG" "$SUBMISSION_REPO" repos integrity.txt > status.html
+        run: python3 script/status-page.py "$ORG" repos integrity.txt > status.html
 
       # Committed only when something other than the update time changes
       - name: Publish to GitHub Pages

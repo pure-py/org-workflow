@@ -185,7 +185,17 @@ def submission(org: str, repo: str) -> str:
     return f'{heading}\n<table class="submission">\n<tr><th>Target</th><th>Check</th><th>Result</th><th>Detail</th></tr>\n{body}</table>'
 
 
-def page(org: str, repo: str, root: pathlib.Path, report: str) -> str:
+def submissions(org: str, root: pathlib.Path, repos: list[str]) -> str:
+    """Submission section for each repository with a submission workflow"""
+    return "".join(
+        f"<h2>{html.escape(description(root / repo / 'Makefile', SUBMISSION_TARGET))} status</h2>\n"
+        f"{submission(org, repo)}\n"
+        for repo in repos
+        if (root / repo / ".github" / "workflows" / SUBMISSION_WORKFLOW).exists()
+    )
+
+
+def page(org: str, root: pathlib.Path, report: str) -> str:
     repos = sorted(path.name for path in root.iterdir() if (path / ".git").exists())
     prs = [(name, pr) for name in repos for pr in pull_requests(org, name)]
     title = f"{html.escape(display_name(org))} status"
@@ -206,9 +216,7 @@ def page(org: str, repo: str, root: pathlib.Path, report: str) -> str:
 </head>
 <body>
 <h1>{title}</h1>
-<h2>{html.escape(description(root / repo / "Makefile", SUBMISSION_TARGET))} status</h2>
-{submission(org, repo)}
-<h2>Dependencies</h2>
+{submissions(org, root, repos)}<h2>Dependencies</h2>
 <p>Updated <time>{updated}</time> UTC.</p>
 <img class="diagram" src="dependencies.svg" alt="Dependencies between repositories">
 <table class="key">
@@ -226,8 +234,8 @@ def page(org: str, repo: str, root: pathlib.Path, report: str) -> str:
 
 
 def main() -> None:
-    org, repo, root, report = sys.argv[1:]
-    sys.stdout.write(page(org, repo, pathlib.Path(root), pathlib.Path(report).read_text()))
+    org, root, report = sys.argv[1:]
+    sys.stdout.write(page(org, pathlib.Path(root), pathlib.Path(report).read_text()))
 
 
 if __name__ == "__main__":

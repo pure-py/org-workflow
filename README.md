@@ -9,7 +9,8 @@ Dependency diagram, open pull requests and org-wide project integrity, published
 - `script/diagram/`: dependency diagram, with a module for each kind of project in `node/` and each kind of
   dependency in `edge/`
 - `script/check-project-integrity.sh`: integrity rules for the project board and the issues of every repository
-- `script/status-page.py`: status page, with the diagram, open pull requests and integrity report
+- `script/status-page.py`: status page, with the diagram, open pull requests and integrity report, and the latest
+  run of the `submission.yml` workflow of any repository with one
 
 ## Building
 
