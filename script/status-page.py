@@ -18,7 +18,7 @@ from diagram.edge import Edge
 SUBMISSION_WORKFLOW = "submission.yml"
 SUBMISSION_REPORT = "submission-report"
 SUBMISSION_TARGET = "check-submission"
-ISSUE = re.compile(r"#(\d+)")
+ISSUE = re.compile(r"(?P<repo>[\w.-]+)?#(?P<number>\d+)")
 FIELDS = "number,title,url,author,isDraft,updatedAt,reviewDecision,statusCheckRollup"
 FAILED = {"FAILURE", "ERROR", "TIMED_OUT", "CANCELLED", "ACTION_REQUIRED"}
 REVIEW = {
@@ -37,7 +37,8 @@ td.title, table.submission td:nth-child(4) { white-space: normal; }
 table.key { font-size: 0.8em; }
 table.key td { border: none; padding: 0 0.5em; }
 table.key svg { vertical-align: middle; }
-table.integrity td:first-child { width: 4em; }
+table.integrity td:first-child { width: 12em; }
+table.integrity td:nth-child(2) { width: 4em; }
 """
 
 
@@ -88,7 +89,7 @@ def row(repo: str, pr: dict[str, Any]) -> str:
     )
 
 
-def integrity(org: str, repo: str, report: str) -> str:
+def integrity(org: str, report: str) -> str:
     rules: list[tuple[str, list[list[str]]]] = []
     for line in report.splitlines():
         if line.startswith("=== "):
@@ -98,14 +99,20 @@ def integrity(org: str, repo: str, report: str) -> str:
     if not any(rows for _, rows in rules):
         return "<p>All rules passed.</p>"
 
-    def cell(text: str) -> str:
-        link = rf'<a href="https://github.com/{org}/{repo}/issues/\1">#\1</a>'
+    def cell(repo: str, text: str) -> str:
+        """Link issue references in text, to repo unless qualified by a repository"""
+
+        def link(m: re.Match[str]) -> str:
+            url = f"https://github.com/{org}/{m['repo'] or repo}/issues/{m['number']}"
+            return f'<a href="{url}">{m[0]}</a>'
+
         return ISSUE.sub(link, html.escape(text))
 
     def table(rows: list[list[str]]) -> str:
         headings = "".join(f"<th>{html.escape(h)}</th>" for h in rows[0])
         body = "".join(
-            "<tr>" + "".join(f"<td>{cell(c)}</td>" for c in row) + "</tr>\n" for row in rows[1:]
+            "<tr>" + "".join(f"<td>{cell(row[0], c)}</td>" for c in row) + "</tr>\n"
+            for row in rows[1:]
         )
         return f'<table class="integrity">\n<tr>{headings}</tr>\n{body}</table>'
 
@@ -178,7 +185,17 @@ def submission(org: str, repo: str) -> str:
     return f'{heading}\n<table class="submission">\n<tr><th>Target</th><th>Check</th><th>Result</th><th>Detail</th></tr>\n{body}</table>'
 
 
-def page(org: str, repo: str, root: pathlib.Path, report: str) -> str:
+def submissions(org: str, root: pathlib.Path, repos: list[str]) -> str:
+    """Submission section for each repository with a submission workflow"""
+    return "".join(
+        f"<h2>{html.escape(description(root / repo / 'Makefile', SUBMISSION_TARGET))} status</h2>\n"
+        f"{submission(org, repo)}\n"
+        for repo in repos
+        if (root / repo / ".github" / "workflows" / SUBMISSION_WORKFLOW).exists()
+    )
+
+
+def page(org: str, root: pathlib.Path, report: str) -> str:
     repos = sorted(path.name for path in root.iterdir() if (path / ".git").exists())
     prs = [(name, pr) for name in repos for pr in pull_requests(org, name)]
     title = f"{html.escape(display_name(org))} status"
@@ -199,9 +216,7 @@ def page(org: str, repo: str, root: pathlib.Path, report: str) -> str:
 </head>
 <body>
 <h1>{title}</h1>
-<h2>{html.escape(description(root / repo / "Makefile", SUBMISSION_TARGET))} status</h2>
-{submission(org, repo)}
-<h2>Dependencies</h2>
+{submissions(org, root, repos)}<h2>Dependencies</h2>
 <p>Updated <time>{updated}</time> UTC.</p>
 <img class="diagram" src="dependencies.svg" alt="Dependencies between repositories">
 <table class="key">
@@ -212,15 +227,15 @@ def page(org: str, repo: str, root: pathlib.Path, report: str) -> str:
 <h2>Draft pull requests</h2>
 {table(draft=True)}
 <h2>Project integrity</h2>
-{integrity(org, repo, report)}
+{integrity(org, report)}
 </body>
 </html>
 """
 
 
 def main() -> None:
-    org, repo, root, report = sys.argv[1:]
-    sys.stdout.write(page(org, repo, pathlib.Path(root), pathlib.Path(report).read_text()))
+    org, root, report = sys.argv[1:]
+    sys.stdout.write(page(org, pathlib.Path(root), pathlib.Path(report).read_text()))
 
 
 if __name__ == "__main__":

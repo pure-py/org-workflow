@@ -1,18 +1,37 @@
 #!/usr/bin/env bash
-set -e
+set -eo pipefail
 
-if [ $# -ne 4 ]; then
-  echo "Usage: $0 <organisation> <repository> <project number> <comma-separated Statuses whose issues must have a milestone>" >&2
+if [ $# -ne 3 ]; then
+  echo "Usage: $0 <organisation> <project number> <comma-separated Statuses whose issues must have a milestone>" >&2
   exit 1
 fi
 
 ORG="$1"
-REPO="$2"
-PROJECT="$3"
-ACTIVE="$4"
+PROJECT="$2"
+ACTIVE="$3"
 ERRORS=0
 
-echo "Checking project integrity for $ORG/$REPO (project $PROJECT)..."
+echo "Checking project integrity for $ORG (project $PROJECT)..."
+
+REPOS=$(gh repo list "$ORG" --no-archived --limit 1000 --json name --jq '.[].name')
+
+# Issues of every repository in the given state, with the given fields
+issues() {
+  local state="$1"
+  local fields="$2"
+  for repo in $REPOS; do
+    gh api graphql --paginate -f org="$ORG" -f repo="$repo" -f query='
+      query($endCursor: String, $org: String!, $repo: String!) {
+        repository(owner: $org, name: $repo) {
+          issues(first: 100, states: '"$state"', after: $endCursor) {
+            pageInfo { hasNextPage endCursor }
+            nodes { number title repository { name } '"$fields"' }
+          }
+        }
+      }
+    ' --jq '.data.repository.issues.nodes[]' || exit 1
+  done | jq -cs 'sort_by(.repository.name, .number)'
+}
 
 ALL_ITEMS=$(gh api graphql --paginate -f org="$ORG" -F project="$PROJECT" -f query='
   query($endCursor: String, $org: String!, $project: Int!) {
@@ -29,7 +48,7 @@ ALL_ITEMS=$(gh api graphql --paginate -f org="$ORG" -F project="$PROJECT" -f que
                 number
                 title
                 state
-                milestone { title }
+                milestone { title state }
                 repository { name }
               }
             }
@@ -38,36 +57,13 @@ ALL_ITEMS=$(gh api graphql --paginate -f org="$ORG" -F project="$PROJECT" -f que
       }
     }
   }
-' --jq '[.data.organization.projectV2.items.nodes[] | select(.content != null and .content.repository.name == "'"$REPO"'")]')
+' --jq '.data.organization.projectV2.items.nodes[] | select(.content.number != null)' |
+  jq -cs 'sort_by(.content.repository.name, .content.number)')
 
-CLOSED_ISSUES=$(gh api graphql --paginate -f org="$ORG" -f repo="$REPO" -f query='
-  query($endCursor: String, $org: String!, $repo: String!) {
-    repository(owner: $org, name: $repo) {
-      issues(first: 100, states: CLOSED, after: $endCursor) {
-        pageInfo { hasNextPage endCursor }
-        nodes {
-          number
-          title
-          subIssues(first: 100) { nodes { number state } }
-        }
-      }
-    }
-  }
-' --jq '[.data.repository.issues.nodes[]]')
+CLOSED_ISSUES=$(issues CLOSED 'subIssues(first: 100) { nodes { number state repository { name } } }')
+OPEN_ISSUES=$(issues OPEN '')
 
-OPEN_ISSUES=$(gh api graphql --paginate -f org="$ORG" -f repo="$REPO" -f query='
-  query($endCursor: String, $org: String!, $repo: String!) {
-    repository(owner: $org, name: $repo) {
-      issues(first: 100, states: OPEN, after: $endCursor) {
-        pageInfo { hasNextPage endCursor }
-        nodes { number title }
-      }
-    }
-  }
-' --jq '[.data.repository.issues.nodes[]]')
-
-ON_BOARD=$(echo "$ALL_ITEMS" | jq -cs 'add | map(.content.number)')
-CLOSED_MILESTONES=$(gh api "repos/$ORG/$REPO/milestones?state=closed" --jq '[.[].title]')
+ON_BOARD=$(echo "$ALL_ITEMS" | jq -c 'map("\(.content.repository.name)#\(.content.number)")')
 ACTIVE_STATUSES=$(jq -cn --arg s "$ACTIVE" '$s | split(",") | map(ltrimstr(" ") | rtrimstr(" "))')
 
 check() {
@@ -89,29 +85,30 @@ check() {
   done < <(echo "$items" | jq -r ".[] | $filter | $fmt")
 }
 
-check "Open issues missing from the project board" $'Issue\tTitle' "$OPEN_ISSUES" \
-  'select(.number as $n | '"$ON_BOARD"' | index($n) | not)' \
-  '"#\(.number)\t\(.title)"'
+check "Open issues missing from the project board" $'Repository\tIssue\tTitle' "$OPEN_ISSUES" \
+  'select("\(.repository.name)#\(.number)" as $i | '"$ON_BOARD"' | index($i) | not)' \
+  '"\(.repository.name)\t#\(.number)\t\(.title)"'
 
-check "Open issues without a Status" $'Issue\tTitle' "$ALL_ITEMS" \
+check "Open issues without a Status" $'Repository\tIssue\tTitle' "$ALL_ITEMS" \
   'select(.content.state == "OPEN" and .fieldValueByName == null)' \
-  '"#\(.content.number)\t\(.content.title)"'
+  '"\(.content.repository.name)\t#\(.content.number)\t\(.content.title)"'
 
-check "Milestoned issues marked Proposed" $'Issue\tTitle\tMilestone' "$ALL_ITEMS" \
+check "Milestoned issues marked Proposed" $'Repository\tIssue\tTitle\tMilestone' "$ALL_ITEMS" \
   'select(.content.state == "OPEN" and .content.milestone != null and .fieldValueByName.name == "Proposed")' \
-  '"#\(.content.number)\t\(.content.title)\t\(.content.milestone.title)"'
+  '"\(.content.repository.name)\t#\(.content.number)\t\(.content.title)\t\(.content.milestone.title)"'
 
-check "Active issues without a milestone" $'Issue\tTitle\tStatus' "$ALL_ITEMS" \
+check "Active issues without a milestone" $'Repository\tIssue\tTitle\tStatus' "$ALL_ITEMS" \
   'select(.content.state == "OPEN" and .content.milestone == null and (.fieldValueByName.name as $s | '"$ACTIVE_STATUSES"' | index($s)))' \
-  '"#\(.content.number)\t\(.content.title)\t\(.fieldValueByName.name)"'
+  '"\(.content.repository.name)\t#\(.content.number)\t\(.content.title)\t\(.fieldValueByName.name)"'
 
-check "Issues in closed milestones that aren't Done or Rejected" $'Issue\tTitle\tStatus\tMilestone' "$ALL_ITEMS" \
-  'select(.content.milestone != null and (.content.milestone.title as $m | '"$CLOSED_MILESTONES"' | index($m)) and (.fieldValueByName.name != "Done" and .fieldValueByName.name != "Rejected"))' \
-  '"#\(.content.number)\t\(.content.title)\t\(.fieldValueByName.name // "none")\t\(.content.milestone.title)"'
+check "Issues in closed milestones that aren't Done or Rejected" $'Repository\tIssue\tTitle\tStatus\tMilestone' "$ALL_ITEMS" \
+  'select(.content.milestone.state == "CLOSED" and (.fieldValueByName.name != "Done" and .fieldValueByName.name != "Rejected"))' \
+  '"\(.content.repository.name)\t#\(.content.number)\t\(.content.title)\t\(.fieldValueByName.name // "none")\t\(.content.milestone.title)"'
 
-check "Closed issues with open sub-issues" $'Issue\tTitle\tOpen sub-issues' "$CLOSED_ISSUES" \
+# Qualify a sub-issue in another repository by its repository
+check "Closed issues with open sub-issues" $'Repository\tIssue\tTitle\tOpen sub-issues' "$CLOSED_ISSUES" \
   'select(any(.subIssues.nodes[]; .state == "OPEN"))' \
-  '"#\(.number)\t\(.title)\t\([.subIssues.nodes[] | select(.state == "OPEN") | "#\(.number)"] | join(", "))"'
+  '.repository.name as $r | "\($r)\t#\(.number)\t\(.title)\t\([.subIssues.nodes[] | select(.state == "OPEN") | if .repository.name == $r then "#\(.number)" else "\(.repository.name)#\(.number)" end] | join(", "))"'
 
 echo ""
 if [ "$ERRORS" -eq 0 ]; then
