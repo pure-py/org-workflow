@@ -18,3 +18,5 @@ integrity.txt:
 ## Status page
 status.html: dependencies.svg integrity.txt
 	uv run --locked python script/status-page.py $(ORG) $(REPO) .. integrity.txt > $@
+
+.PHONY: default dependencies.svg integrity.txt status.html
