@@ -1,0 +1,7 @@
+.mypy_cache/
+.ruff_cache/
+.venv/
+__pycache__/
+dependencies.svg
+integrity.txt
+status.html

@@ -1,0 +1,25 @@
+[project]
+name = "org-workflow"
+description = "Dependency diagram, open pull requests and project integrity of the organisation's repositories"
+version = "0.1.0"
+requires-python = ">=3.12"
+
+[dependency-groups]
+dev = [
+    "mypy>=2.3.1",
+    "ruff>=0.16.2",
+]
+
+[tool.mypy]
+strict = true
+mypy_path = "script"
+
+[tool.ruff]
+line-length = 100
+
+# Annotations unevaluated in every module, so no type needs quoting
+[tool.ruff.lint]
+extend-select = ["I002"]
+
+[tool.ruff.lint.isort]
+required-imports = ["from __future__ import annotations"]
