@@ -10,12 +10,15 @@ from diagram.node.repository import Repository
 
 @dataclass(frozen=True, eq=False)
 class Organisation:
+    login: str
     repositories: list[Repository]
     projects: dict[str, list[Project]]
 
     @classmethod
-    def load(cls, root: pathlib.Path) -> Organisation:
-        repositories = [Repository.load(p) for p in sorted(root.iterdir()) if (p / ".git").exists()]
+    def load(cls, login: str, root: pathlib.Path) -> Organisation:
+        repositories = [
+            Repository.load(login, p) for p in sorted(root.iterdir()) if (p / ".git").exists()
+        ]
         kinds = {kind.file: kind for kind in Project.kinds()}
         found = {
             repo.name: [
@@ -25,7 +28,11 @@ class Organisation:
             ]
             for repo in repositories
         }
-        return cls(repositories, {name: [p for p in ps if p] for name, ps in found.items()})
+        return cls(login, repositories, {name: [p for p in ps if p] for name, ps in found.items()})
+
+    def pages(self) -> str:
+        """Name of the repository of the organisation's GitHub Pages site"""
+        return f"{self.login}.github.io"
 
     def repository(self, name: str) -> Repository | None:
         return next((r for r in self.repositories if r.name == name), None)

@@ -6,8 +6,6 @@ from dataclasses import dataclass
 
 from diagram.node import Node
 
-ORG = "pure-py"
-
 
 @dataclass(frozen=True)
 class Repository(Node):
@@ -15,9 +13,9 @@ class Repository(Node):
     version: str | None  # Latest release
 
     @classmethod
-    def load(cls, path: pathlib.Path) -> Repository:
+    def load(cls, org: str, path: pathlib.Path) -> Repository:
         view = subprocess.run(
-            ["gh", "release", "view", "--repo", f"{ORG}/{path.name}", "--json", "tagName"]
+            ["gh", "release", "view", "--repo", f"{org}/{path.name}", "--json", "tagName"]
             + ["--jq", ".tagName"],
             capture_output=True,
             text=True,

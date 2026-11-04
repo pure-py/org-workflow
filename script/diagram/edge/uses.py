@@ -10,17 +10,18 @@ from enum import Enum
 
 from diagram.edge import RED, Edge, Style
 from diagram.node import Node
-from diagram.node.repository import ORG
 from diagram.organisation import Organisation
 
-PAGES = f"{ORG}.github.io"
-URL = re.compile(
-    rf"https://(?:github\.com/{ORG}/(?P<repo>[\w.-]+)|{re.escape(PAGES)})(?P<path>[\w./$@{{}}-]*)"
-)
 RELEASE = re.compile(r"^/(?:releases/download/)?(?P<version>v\d[\d.]*)/")
 LATEST = re.compile(r"^/latest/")
 ANNOTATION = re.compile(r"\b(?P<kind>pin|tracks): (?P<label>[^#]*?)\s*$")
 WHEEL = re.compile(r"/(?P<package>[A-Za-z0-9_.]+?)-\d[^/]*\.whl$")
+
+
+def url(org: Organisation) -> re.Pattern[str]:
+    """Pattern matching a URL of a repository of the organisation or of its GitHub Pages site"""
+    github = rf"github\.com/{re.escape(org.login)}/(?P<repo>[\w.-]+)"
+    return re.compile(rf"https://(?:{github}|{re.escape(org.pages())})(?P<path>[\w./$@{{}}-]*)")
 
 
 def package(name: str) -> str:
@@ -49,7 +50,7 @@ def reference(
         name, _, rest = url_path.lstrip("/").partition("/")
         url_path = "/" + rest
         if name == "":
-            name = PAGES
+            name = org.pages()
     git = name.endswith(".git")
     name = name.removesuffix(".git")
     repo = org.repository(name)
@@ -79,6 +80,7 @@ def reference(
 
 
 def uses(org: Organisation) -> list[Uses]:
+    pattern = url(org)
     found: list[Uses] = []
     for repo in org.repositories:
         for path in repo.text_files():
@@ -89,7 +91,7 @@ def uses(org: Organisation) -> list[Uses]:
             found += [
                 r
                 for i, line in enumerate(lines)
-                for match in URL.finditer(line)
+                for match in pattern.finditer(line)
                 if (r := reference(org, source, path, lines, i, match))
             ]
     return found

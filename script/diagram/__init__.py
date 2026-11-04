@@ -70,8 +70,8 @@ def italicise(svg: str, lines: set[str]) -> str:
 
 
 def main() -> None:
-    root, output = map(pathlib.Path, sys.argv[1:])
-    org = Organisation.load(root)
+    login, root, output = sys.argv[1:]
+    org = Organisation.load(login, pathlib.Path(root))
     lines = {line for ps in org.projects.values() for p in ps for line in p.lines()}
     glyphs = "".join(sorted({c for line in lines for c in line if not c.isspace()}))
     # Italic label in white, so the italic font embedded by D2 has every glyph of the descriptions
@@ -84,4 +84,4 @@ def main() -> None:
     )
     if drawn.returncode != 0:
         sys.exit(drawn.stderr)
-    output.write_text(italicise(drawn.stdout, lines))
+    pathlib.Path(output).write_text(italicise(drawn.stdout, lines))

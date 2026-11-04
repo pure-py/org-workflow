@@ -15,8 +15,6 @@ from typing import Any
 
 from diagram.edge import Edge
 
-ORG = "pure-py"
-SPEC_REPO = "pure-py-spec"
 SUBMISSION_WORKFLOW = "submission.yml"
 SUBMISSION_REPORT = "submission-report"
 SUBMISSION_TARGET = "check-submission"
@@ -43,9 +41,14 @@ table.integrity td:first-child { width: 4em; }
 """
 
 
-def pull_requests(repo: str) -> list[dict[str, Any]]:
+def display_name(org: str) -> str:
+    view = ["gh", "api", f"orgs/{org}", "--jq", ".name // .login"]
+    return subprocess.run(view, capture_output=True, text=True, check=True).stdout.strip()
+
+
+def pull_requests(org: str, repo: str) -> list[dict[str, Any]]:
     listing = subprocess.run(
-        ["gh", "pr", "list", "--repo", f"{ORG}/{repo}", "--state", "open", "--json", FIELDS],
+        ["gh", "pr", "list", "--repo", f"{org}/{repo}", "--state", "open", "--json", FIELDS],
         capture_output=True,
         text=True,
         check=True,
@@ -85,7 +88,7 @@ def row(repo: str, pr: dict[str, Any]) -> str:
     )
 
 
-def integrity(report: str) -> str:
+def integrity(org: str, repo: str, report: str) -> str:
     rules: list[tuple[str, list[list[str]]]] = []
     for line in report.splitlines():
         if line.startswith("=== "):
@@ -96,7 +99,7 @@ def integrity(report: str) -> str:
         return "<p>All rules passed.</p>"
 
     def cell(text: str) -> str:
-        link = rf'<a href="https://github.com/{ORG}/{SPEC_REPO}/issues/\1">#\1</a>'
+        link = rf'<a href="https://github.com/{org}/{repo}/issues/\1">#\1</a>'
         return ISSUE.sub(link, html.escape(text))
 
     def table(rows: list[list[str]]) -> str:
@@ -109,9 +112,9 @@ def integrity(report: str) -> str:
     return "\n".join(f"<h3>{html.escape(rule)}</h3>\n{table(rows)}" for rule, rows in rules if rows)
 
 
-def description(target: str) -> str:
-    """Double-hash comment above target's rule in the Makefile"""
-    lines = pathlib.Path("Makefile").read_text().splitlines()
+def description(makefile: pathlib.Path, target: str) -> str:
+    """Double-hash comment above target's rule in makefile"""
+    lines = makefile.read_text().splitlines()
     above = next(lines[i - 1] for i, line in enumerate(lines) if line.startswith(f"{target}:"))
     assert above.startswith("## "), f"{target} has no description"
     return above.removeprefix("## ")
@@ -133,10 +136,10 @@ KEY = [
 ]
 
 
-def submission() -> str:
-    """Submission section built from the latest completed run on main"""
+def submission(org: str, repo: str) -> str:
+    """Submission section built from the latest completed run on main of repo"""
     listing = subprocess.run(
-        ["gh", "run", "list", "--repo", f"{ORG}/{SPEC_REPO}", "--workflow", SUBMISSION_WORKFLOW]
+        ["gh", "run", "list", "--repo", f"{org}/{repo}", "--workflow", SUBMISSION_WORKFLOW]
         + ["--branch", "main", "--status", "completed", "--limit", "1"]
         + ["--json", "databaseId,conclusion,createdAt,url"],
         capture_output=True,
@@ -149,7 +152,7 @@ def submission() -> str:
     run = runs[0]
     with tempfile.TemporaryDirectory() as directory:
         subprocess.run(
-            ["gh", "run", "download", str(run["databaseId"]), "--repo", f"{ORG}/{SPEC_REPO}"]
+            ["gh", "run", "download", str(run["databaseId"]), "--repo", f"{org}/{repo}"]
             + ["--name", SUBMISSION_REPORT, "--dir", directory],
             capture_output=True,
             check=False,
@@ -161,7 +164,7 @@ def submission() -> str:
             else []
         )
     when = run["createdAt"][:16].replace("T", " ")
-    badge = f"https://github.com/{ORG}/{SPEC_REPO}/actions/workflows/{SUBMISSION_WORKFLOW}/badge.svg?branch=main"
+    badge = f"https://github.com/{org}/{repo}/actions/workflows/{SUBMISSION_WORKFLOW}/badge.svg?branch=main"
     heading = (
         f'<p><a href="{run["url"]}"><img class="badge" src="{badge}" alt="{html.escape(run["conclusion"])}"></a>'
         f" {when} UTC</p>"
@@ -175,12 +178,14 @@ def submission() -> str:
     return f'{heading}\n<table class="submission">\n<tr><th>Target</th><th>Check</th><th>Result</th><th>Detail</th></tr>\n{body}</table>'
 
 
-def page(repos: list[str], report: str) -> str:
-    prs = [(repo, pr) for repo in repos for pr in pull_requests(repo)]
+def page(org: str, repo: str, root: pathlib.Path, report: str) -> str:
+    repos = sorted(path.name for path in root.iterdir() if (path / ".git").exists())
+    prs = [(name, pr) for name in repos for pr in pull_requests(org, name)]
+    title = f"{html.escape(display_name(org))} status"
     updated = datetime.datetime.now(datetime.UTC).strftime("%Y-%m-%d %H:%M")
 
     def table(draft: bool) -> str:
-        rows = "".join(row(repo, pr) for repo, pr in prs if pr["isDraft"] == draft)
+        rows = "".join(row(name, pr) for name, pr in prs if pr["isDraft"] == draft)
         return f"""<table>
 <tr><th>Repository</th><th>#</th><th>Title</th><th>Author</th><th>Review</th><th>Checks</th><th>Updated</th></tr>
 {rows}</table>"""
@@ -189,13 +194,13 @@ def page(repos: list[str], report: str) -> str:
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>PurePy status</title>
+<title>{title}</title>
 <style>{STYLE}</style>
 </head>
 <body>
-<h1>PurePy status</h1>
-<h2>{html.escape(description(SUBMISSION_TARGET))} status</h2>
-{submission()}
+<h1>{title}</h1>
+<h2>{html.escape(description(root / repo / "Makefile", SUBMISSION_TARGET))} status</h2>
+{submission(org, repo)}
 <h2>Dependencies</h2>
 <p>Updated <time>{updated}</time> UTC.</p>
 <img class="diagram" src="dependencies.svg" alt="Dependencies between repositories">
@@ -207,16 +212,15 @@ def page(repos: list[str], report: str) -> str:
 <h2>Draft pull requests</h2>
 {table(draft=True)}
 <h2>Project integrity</h2>
-{integrity(report)}
+{integrity(org, repo, report)}
 </body>
 </html>
 """
 
 
 def main() -> None:
-    root, report = map(pathlib.Path, sys.argv[1:])
-    repos = sorted(path.name for path in root.iterdir() if (path / ".git").exists())
-    sys.stdout.write(page(repos, report.read_text()))
+    org, repo, root, report = sys.argv[1:]
+    sys.stdout.write(page(org, repo, pathlib.Path(root), pathlib.Path(report).read_text()))
 
 
 if __name__ == "__main__":
