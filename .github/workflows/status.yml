@@ -14,7 +14,7 @@ permissions:
 
 env:
   ORG: ${{ github.repository_owner }}
-  REPO: pure-py-spec  # Repository with the issues checked for integrity and the submission workflow
+  CHECKED_REPO: pure-py-spec  # Repository with the issues checked for integrity and the submission workflow
 
 jobs:
   status:
@@ -44,14 +44,14 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.PROJECT_PAT }}
         run: |
-          script/check-project-integrity.sh "$ORG" "$REPO" 1 "In progress,Awaiting Review" > integrity.txt 2>&1 && passed=true || passed=false
+          script/check-project-integrity.sh "$ORG" "$CHECKED_REPO" 1 "In progress,Awaiting Review" > integrity.txt 2>&1 && passed=true || passed=false
           cat integrity.txt
           echo "passed=$passed" >> "$GITHUB_OUTPUT"
 
       - name: Build page
         env:
           GH_TOKEN: ${{ github.token }}
-        run: python3 script/status-page.py "$ORG" "$REPO" repos integrity.txt > status.html
+        run: python3 script/status-page.py "$ORG" "$CHECKED_REPO" repos integrity.txt > status.html
 
       # Committed only when something other than the update time changes
       - name: Publish to GitHub Pages

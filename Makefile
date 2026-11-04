@@ -1,6 +1,6 @@
 ORG := pure-py
 # Repository with the issues checked for integrity and the submission workflow
-REPO := pure-py-spec
+CHECKED_REPO := pure-py-spec
 PROJECT := 1
 # Statuses whose issues must have a milestone
 ACTIVE := In progress,Awaiting Review
@@ -13,10 +13,10 @@ dependencies.svg:
 
 ## Project integrity report
 integrity.txt:
-	-script/check-project-integrity.sh $(ORG) $(REPO) $(PROJECT) "$(ACTIVE)" > $@
+	-script/check-project-integrity.sh $(ORG) $(CHECKED_REPO) $(PROJECT) "$(ACTIVE)" > $@
 
 ## Status page
 status.html: dependencies.svg integrity.txt
-	uv run --locked python script/status-page.py $(ORG) $(REPO) .. integrity.txt > $@
+	uv run --locked python script/status-page.py $(ORG) $(CHECKED_REPO) .. integrity.txt > $@
 
 .PHONY: default dependencies.svg integrity.txt status.html
