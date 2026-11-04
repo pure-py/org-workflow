@@ -1,6 +1,6 @@
 [project]
 name = "org-workflow"
-description = "Dependency diagram, open pull requests and project integrity of the organisation's repositories"
+description = "Dependency diagram, open pull requests and org-wide project integrity"
 version = "0.1.0"
 requires-python = ">=3.12"
 
