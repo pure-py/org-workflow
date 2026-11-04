@@ -2,122 +2,27 @@ Checking project integrity for pure-py (project 1)...
 
 === Open issues missing from the project board ===
 Repository	Issue	Title
-isabelle-purepy	#24	Names and ill-formedness as datatypes
-isabelle-purepy	#36	Spec references in type-checker diagnostics
-isabelle-python-codegen	#7	Type annotations in generated code
-isabelle-python-codegen	#8	PurePy as target language
 isabelle-python-codegen	#12	Relative imports between generated modules
-org-workflow	#2	Org-wide CI/CD
-pure-py-spec	#1	Language name
-pure-py-spec	#9	Reserved words
-pure-py-spec	#14	Syntactic extensions
-pure-py-spec	#24	Piecewise function definitions
-pure-py-spec	#25	Semantic extensions
-pure-py-spec	#26	Implicit currying
-pure-py-spec	#54	Destructuring assignment
-pure-py-spec	#55	f-strings
 pure-py-spec	#56	Default arguments
-pure-py-spec	#57	*args and **kwargs
-pure-py-spec	#59	Slicing
-pure-py-spec	#64	Reference interpreter
-pure-py-spec	#67	“Purity” justification
-pure-py-spec	#70	Decorators
-pure-py-spec	#73	Open term types
-pure-py-spec	#81	Identity operator (is) for singleton sentinels
-pure-py-spec	#82	Chained comparison
-pure-py-spec	#84	Unpacking operator/star patterns
-pure-py-spec	#85	Or patterns
-pure-py-spec	#86	Enums
-pure-py-spec	#92	`mypy`-compatible gradual type system
-pure-py-spec	#94	Desugaring phase
-pure-py-spec	#95	Language pragmas
-pure-py-spec	#96	Explicit variable definitions
-pure-py-spec	#103	Pandas support
-pure-py-spec	#105	`__all__` for wildcard imports
-pure-py-spec	#108	Case studies: Fluid and Fortl
-pure-py-spec	#110	Named tuples
-pure-py-spec	#112	Migrate spec sources to OTT
-pure-py-spec	#114	Self-hosted type checker and interpreter
-pure-py-spec	#118	Related work
-pure-py-spec	#126	Relative imports
-pure-py-spec	#127	Keyword arguments for functions
-pure-py-spec	#130	Type soundness
-pure-py-spec	#132	Modules with primitive and defined members
-pure-py-spec	#135	Aliased imports and multi-imports
-pure-py-spec	#141	VSCode plugin
-pure-py-spec	#144	`raise` without exception handlers
-pure-py-spec	#147	Set expressions
-pure-py-spec	#156	Ints and floats
-pure-py-spec	#162	Strict mode
-pure-py-spec	#171	Python 3.14 baseline
-pure-py-spec	#178	Annotated lambdas and generator targets
-pure-py-spec	#180	Proof of agreement with Python semantics
-pure-py-spec	#181	Methods
-pure-py-spec	#188	Graduality
-pure-py-spec	#190	Case guards
-pure-py-spec	#191	Complex and bytes literals
-pure-py-spec	#193	Unicode identifiers
-pure-py-spec	#195	Paper examples from test cases, with playground links
-pure-py-spec	#196	Tighter rule attribution
-pure-py-spec	#198	functools.partial
-pure-py-spec	#199	Frozen dataclasses
-pure-py-spec	#202	Variadic tuple type and `*` on tuples
-pure-py-spec	#210	Project integrity checks
-pure-py-spec	#213	Polymorphism extensions
-pure-py-spec	#220	Recursive type aliases
-pure-py-spec	#222	Iterator functions
-pure-py-spec	#223	Paper rough draft
-pure-py-spec	#225	First-class classes
-pure-py-spec	#226	Abstract methods
-pure-py-spec	#227	Mathematical functions
-pure-py-spec	#228	Type constructors
-pure-py-spec	#233	Protocols
 pure-py-spec	#234	`@overload`
-pure-py-spec	#236	`|`, `&`, `-` and `^` for sets and dicts
-pure-py-spec	#241	Optional symbols in productions
-pure-py-spec	#242	Narrowing in match and if branches
-pure-py-spec	#243	Generalised `assert False`
-pure-py-spec	#253	Type comments
-pure-py-spec	#258	Operator overloading
-pure-py-spec	#259	Mandatory parentheses for one-element tuples
-pure-py-spec	#260	Type inference for assignment
-pure-py-spec	#266	PyPI publish step
-pure-py-spec	#278	RQ: Familiarity of Python syntax
-pure-py-spec	#279	RQ: Effort of generating PurePy solutions
-pure-py-spec	#280	RQ: Correctness and size of PurePy solutions
-pure-py-spec	#281	RQ: Translation of existing Python
-pure-py-spec	#284	PurePy-like languages
-pure-py-spec	#289	Diagram showing scope of specification
-pure-py-spec	#290	Type arguments from lambda bodies
-pure-py-spec	#292	Submission artifact
-pure-py-spec	#297	Hashable
-pure-py-spec	#306	`Annotated`
-pure-py-spec	#307	Template strings
-pure-py-spec	#323	Shared experimental setup
-pure-py-spec	#324	`Setting` class
-pure-py-spec	#325	Typed Python setting
-pure-py-spec	#326	Group rejections by kind
-pure-py-spec	#328	v0.25
-pure-py.github.io	#1	PurePy playground
-pure-py.github.io	#6	Integrate playground into website
-pure-py.github.io	#14	Anonymous URL for specification
-pure-py.github.io	#16	Keep PurePy examples in sync with `pure-py-spec` repository
-pure-py.github.io	#21	Overhaul playground UI
-pure-py.github.io	#22	Periodically check unsaved files for diagnostics
-pure-py.github.io	#24	Scope undo and redo history by tab
 pure-py.github.io	#27	Build playground links for conformance-suite
-pure-py.github.io	#28	Embeddable playground
-pure-py.github.io	#29	Python behaviour for PurePy `undef`
-pure-py.github.io	#30	Bump Zod to remove Rollup build warnings
 
 === Open issues without a Status ===
 
 === Milestoned issues marked Proposed ===
+Repository	Issue	Title	Milestone
+pure-py-spec	#105	`__all__` for wildcard imports	pure-py-spec 1.1
+pure-py-spec	#196	Tighter rule attribution	PLDI 2027
+pure-py-spec	#222	Iterator functions	pure-py-spec 1.1
+pure-py.github.io	#21	Overhaul playground UI	PLDI 2027
+pure-py.github.io	#29	Python behaviour for PurePy `undef`	PLDI 2027
 
 === Active issues without a milestone ===
+Repository	Issue	Title	Status
+pure-py-spec	#14	Syntactic extensions	In progress
 
 === Issues in closed milestones that aren't Done or Rejected ===
 
 === Closed issues with open sub-issues ===
 
-107 issue(s) found.
+10 issue(s) found.
