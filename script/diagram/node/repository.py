@@ -34,5 +34,6 @@ class Repository(Node):
             for eol, name in (
                 entry.split("\t", 1) for entry in entries.decode().split("\0") if entry
             )
-            if not eol.startswith("i/-text")
+            # A submodule entry has no content in the index, so no line ending either
+            if not eol.startswith(("i/-text", "i/ "))
         ]
