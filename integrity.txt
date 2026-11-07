@@ -2,7 +2,6 @@ Checking project integrity for pure-py (project 1)...
 
 === Open issues missing from the project board ===
 Repository	Issue	Title
-isabelle-python-codegen	#12	Relative imports between generated modules
 pure-py-spec	#56	Default arguments
 pure-py-spec	#234	`@overload`
 pure-py.github.io	#27	Build playground links for conformance-suite
@@ -12,17 +11,18 @@ pure-py.github.io	#27	Build playground links for conformance-suite
 === Milestoned issues marked Proposed ===
 Repository	Issue	Title	Milestone
 pure-py-spec	#105	`__all__` for wildcard imports	pure-py-spec 1.1
-pure-py-spec	#196	Tighter rule attribution	PLDI 2027
 pure-py-spec	#222	Iterator functions	pure-py-spec 1.1
+pure-py-spec	#343	Modules binding str	pure-py-spec 1.1
+pure-py-spec	#347	`@functools.cache`	pure-py-spec 1.1
 pure-py.github.io	#21	Overhaul playground UI	PLDI 2027
 pure-py.github.io	#29	Python behaviour for PurePy `undef`	PLDI 2027
 
 === Active issues without a milestone ===
-Repository	Issue	Title	Status
-pure-py-spec	#14	Syntactic extensions	In progress
 
 === Issues in closed milestones that aren't Done or Rejected ===
 
 === Closed issues with open sub-issues ===
+Repository	Issue	Title	Open sub-issues
+pure-py-spec	#14	Syntactic extensions	#24
 
 10 issue(s) found.
