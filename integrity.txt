@@ -3,15 +3,18 @@ Checking project integrity for pure-py (project 1)...
 === Open issues missing from the project board ===
 Repository	Issue	Title
 pure-py-spec	#56	Default arguments
-pure-py.github.io	#27	Build playground links for conformance-suite
+pure-py.github.io	#35	Automate version bump and build time check/test it works
+pure-py.github.io	#37	Use reference interpreter
+pure-py.github.io	#38	Report exceptions on page
 
 === Open issues without a Status ===
+Repository	Issue	Title
+pure-py-spec	#356	Submission
 
 === Milestoned issues marked Proposed ===
 Repository	Issue	Title	Milestone
 pure-py-spec	#343	Modules binding str	pure-py-spec 1.1
 pure-py-spec	#347	`@functools.cache`	pure-py-spec 1.1
-pure-py.github.io	#21	Overhaul playground UI	PLDI 2027
 pure-py.github.io	#29	Python behaviour for PurePy `undef`	PLDI 2027
 
 === Active issues without a milestone ===
@@ -19,5 +22,7 @@ pure-py.github.io	#29	Python behaviour for PurePy `undef`	PLDI 2027
 === Issues in closed milestones that aren't Done or Rejected ===
 
 === Closed issues with open sub-issues ===
+Repository	Issue	Title	Open sub-issues
+pure-py.github.io	#6	Integrate playground into website	#28
 
-6 issue(s) found.
+9 issue(s) found.
