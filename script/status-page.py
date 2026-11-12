@@ -31,6 +31,7 @@ body { font-family: system-ui, sans-serif; max-width: 70em; margin: 2em auto; pa
 img.diagram { width: 32em; max-width: 100%; }
 img.badge { vertical-align: middle; }
 tr.failed td { color: #e00000; }
+tr.passed td { color: #008000; }
 table { border-collapse: collapse; }
 th, td { text-align: left; padding: 0.3em 0.6em; border-bottom: 1px solid #ccc; white-space: nowrap; }
 td.title, table.submission td:nth-child(4) { white-space: normal; }
@@ -177,7 +178,7 @@ def submission(org: str, repo: str) -> str:
         f" {when} UTC</p>"
     )
     body = "".join(
-        ('<tr class="failed">' if row[2] == "failed" else "<tr>")
+        (f'<tr class="{row[2]}">' if row[2] in ("passed", "failed") else "<tr>")
         + "".join(f"<td>{html.escape(c)}</td>" for c in row)
         + "</tr>\n"
         for row in rows
