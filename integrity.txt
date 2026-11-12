@@ -15,7 +15,6 @@ pure-py-spec	#356	Submission
 Repository	Issue	Title	Milestone
 pure-py-spec	#343	Modules binding str	pure-py-spec 1.1
 pure-py-spec	#347	`@functools.cache`	pure-py-spec 1.1
-pure-py.github.io	#29	Python behaviour for PurePy `undef`	PLDI 2027
 
 === Active issues without a milestone ===
 
@@ -25,4 +24,4 @@ pure-py.github.io	#29	Python behaviour for PurePy `undef`	PLDI 2027
 Repository	Issue	Title	Open sub-issues
 pure-py.github.io	#6	Integrate playground into website	#28
 
-9 issue(s) found.
+8 issue(s) found.
