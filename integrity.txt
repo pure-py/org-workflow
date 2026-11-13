@@ -2,6 +2,8 @@ Checking project integrity for pure-py (project 1)...
 
 === Open issues missing from the project board ===
 Repository	Issue	Title
+pldi2027	#45	Section 2.1 still mentions directory names (but the figure doesn't)
+pldi2027	#46	Mention later Python versions?
 pure-py-spec	#56	Default arguments
 pure-py.github.io	#35	Automate version bump and build time check/test it works
 
@@ -22,4 +24,4 @@ pure-py-spec	#347	`@functools.cache`	pure-py-spec 1.1
 Repository	Issue	Title	Open sub-issues
 pure-py.github.io	#6	Integrate playground into website	#28
 
-6 issue(s) found.
+8 issue(s) found.
