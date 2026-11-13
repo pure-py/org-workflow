@@ -8,6 +8,8 @@ body { font-family: system-ui, sans-serif; max-width: 70em; margin: 2em auto; pa
 img.diagram { width: 32em; max-width: 100%; }
 img.badge { vertical-align: middle; }
 tr.failed td { color: #e00000; }
+tr.passed td { color: #008000; }
+tr.warning td { color: #c07000; }
 table { border-collapse: collapse; }
 th, td { text-align: left; padding: 0.3em 0.6em; border-bottom: 1px solid #ccc; white-space: nowrap; }
 td.title, table.submission td:nth-child(4) { white-space: normal; }
@@ -24,41 +26,41 @@ table.integrity td:nth-child(2) { width: 4em; }
 <p><a href="https://github.com/pure-py/pldi2027/actions/runs/43334931090"><img class="badge" src="https://github.com/pure-py/pldi2027/actions/workflows/submission.yml/badge.svg?branch=main" alt="failure"></a> 2026-11-13 00:10 UTC</p>
 <table class="submission">
 <tr><th>Target</th><th>Check</th><th>Result</th><th>Detail</th></tr>
-<tr><td>check-targets</td><td>Make targets documented, and workflows named after their targets</td><td>passed</td><td></td></tr>
+<tr class="passed"><td>check-targets</td><td>Make targets documented, and workflows named after their targets</td><td>passed</td><td></td></tr>
 <tr class="failed"><td>check-spec-release</td><td>Specification submodule at the release tag of its version</td><td>failed</td><td>spec 0.27.9 at v0.27.9-10-g0026030a</td></tr>
-<tr><td>check-mechanisation-release</td><td>Mechanisation release with the conformance suite of the spec version</td><td>passed</td><td>mechanisation v0.27.9 with suite 0.27.9, spec 0.27.9</td></tr>
-<tr><td>check-evaluation-figures</td><td>Evaluation figures from complete runs, with no known failures listed</td><td>passed</td><td>0 known figure failures</td></tr>
-<tr><td>check-consistency</td><td>Spec consistent with conformance suite</td><td>passed</td><td></td></tr>
-<tr><td></td><td>package requires the pinned Python version</td><td>passed</td><td></td></tr>
-<tr><td></td><td>unique rule names</td><td>passed</td><td></td></tr>
-<tr><td></td><td>rule attribution</td><td>passed</td><td></td></tr>
-<tr><td></td><td>classification of excluded features</td><td>passed</td><td></td></tr>
-<tr><td></td><td>Python sources pass mypy and ruff</td><td>passed</td><td></td></tr>
-<tr><td>paper-anon.pdf</td><td>Anonymised paper builds, with no undefined references or citations</td><td>passed</td><td></td></tr>
-<tr><td>supplementary.zip</td><td>Archive builds</td><td>passed</td><td>mechanisation v0.27.9; suite 0 commits since v0.27.9</td></tr>
-<tr><td>paper-submission</td><td>Anonymised paper and archive built</td><td>passed</td><td></td></tr>
-<tr><td></td><td>package requires the pinned Python version</td><td>passed</td><td></td></tr>
-<tr><td></td><td>unique rule names</td><td>passed</td><td></td></tr>
-<tr><td></td><td>rule attribution</td><td>passed</td><td></td></tr>
-<tr><td></td><td>classification of excluded features</td><td>passed</td><td></td></tr>
-<tr><td></td><td>Python sources pass mypy and ruff</td><td>passed</td><td></td></tr>
+<tr class="passed"><td>check-mechanisation-release</td><td>Mechanisation release with the conformance suite of the spec version</td><td>passed</td><td>mechanisation v0.27.9 with suite 0.27.9, spec 0.27.9</td></tr>
+<tr class="passed"><td>check-evaluation-figures</td><td>Evaluation figures from complete runs, with no known failures listed</td><td>passed</td><td>0 known figure failures</td></tr>
+<tr class="passed"><td>check-consistency</td><td>Spec consistent with conformance suite</td><td>passed</td><td></td></tr>
+<tr class="passed"><td></td><td>package requires the pinned Python version</td><td>passed</td><td></td></tr>
+<tr class="passed"><td></td><td>unique rule names</td><td>passed</td><td></td></tr>
+<tr class="passed"><td></td><td>rule attribution</td><td>passed</td><td></td></tr>
+<tr class="passed"><td></td><td>classification of excluded features</td><td>passed</td><td></td></tr>
+<tr class="passed"><td></td><td>Python sources pass mypy and ruff</td><td>passed</td><td></td></tr>
+<tr class="passed"><td>paper-anon.pdf</td><td>Anonymised paper builds, with no undefined references or citations</td><td>passed</td><td></td></tr>
+<tr class="passed"><td>supplementary.zip</td><td>Archive builds</td><td>passed</td><td>mechanisation v0.27.9; suite 0 commits since v0.27.9</td></tr>
+<tr class="passed"><td>paper-submission</td><td>Anonymised paper and archive built</td><td>passed</td><td></td></tr>
+<tr class="passed"><td></td><td>package requires the pinned Python version</td><td>passed</td><td></td></tr>
+<tr class="passed"><td></td><td>unique rule names</td><td>passed</td><td></td></tr>
+<tr class="passed"><td></td><td>rule attribution</td><td>passed</td><td></td></tr>
+<tr class="passed"><td></td><td>classification of excluded features</td><td>passed</td><td></td></tr>
+<tr class="passed"><td></td><td>Python sources pass mypy and ruff</td><td>passed</td><td></td></tr>
 <tr class="failed"><td>check-page-limit</td><td>Anonymised paper within page limit, references excluded</td><td>failed</td><td>references begin on p. 22, limit 20 pages</td></tr>
-<tr><td>check-paper-anonymised</td><td>Anonymised paper free of author and project names (text and metadata)</td><td>passed</td><td></td></tr>
-<tr><td>check-author-comments</td><td>No author notes or todos (omitted from anon builds)</td><td>warning</td><td>2 author notes and todos (DAO 2)</td></tr>
-<tr><td>check-change-markup</td><td>No change markup (accepted in anon builds)</td><td>passed</td><td>0 uses of change markup</td></tr>
-<tr><td>check-supplementary-bib</td><td>No entries in the supplementary bibliography (moved to the Zotero export)</td><td>warning</td><td>54 entries in additional-refs.bib</td></tr>
-<tr><td>check-review-mode</td><td>Anonymised paper in review mode, with line numbers</td><td>passed</td><td>43 numbered lines on p. 2</td></tr>
-<tr><td>check-anonymised</td><td>Archive anonymised: no project names in file names or contents</td><td>passed</td><td></td></tr>
-<tr><td>check-archived-theories</td><td>Archived mechanisation builds: proofs checked, type checker generated</td><td>passed</td><td></td></tr>
-<tr><td>check-archived-suite</td><td>Type checker generated from archived mechanisation passes archived conformance suite</td><td>passed</td><td></td></tr>
-<tr><td></td><td>mypy and ruff</td><td>passed</td><td></td></tr>
-<tr><td></td><td>judgements and rules cited</td><td>passed</td><td></td></tr>
-<tr><td></td><td>run out of fuel</td><td>passed</td><td></td></tr>
-<tr><td></td><td>conformance suite, 896/896 passed</td><td>passed</td><td></td></tr>
+<tr class="passed"><td>check-paper-anonymised</td><td>Anonymised paper free of author and project names (text and metadata)</td><td>passed</td><td></td></tr>
+<tr class="warning"><td>check-author-comments</td><td>No author notes or todos (omitted from anon builds)</td><td>warning</td><td>2 author notes and todos (DAO 2)</td></tr>
+<tr class="passed"><td>check-change-markup</td><td>No change markup (accepted in anon builds)</td><td>passed</td><td>0 uses of change markup</td></tr>
+<tr class="warning"><td>check-supplementary-bib</td><td>No entries in the supplementary bibliography (moved to the Zotero export)</td><td>warning</td><td>54 entries in additional-refs.bib</td></tr>
+<tr class="passed"><td>check-review-mode</td><td>Anonymised paper in review mode, with line numbers</td><td>passed</td><td>43 numbered lines on p. 2</td></tr>
+<tr class="passed"><td>check-anonymised</td><td>Archive anonymised: no project names in file names or contents</td><td>passed</td><td></td></tr>
+<tr class="passed"><td>check-archived-theories</td><td>Archived mechanisation builds: proofs checked, type checker generated</td><td>passed</td><td></td></tr>
+<tr class="passed"><td>check-archived-suite</td><td>Type checker generated from archived mechanisation passes archived conformance suite</td><td>passed</td><td></td></tr>
+<tr class="passed"><td></td><td>mypy and ruff</td><td>passed</td><td></td></tr>
+<tr class="passed"><td></td><td>judgements and rules cited</td><td>passed</td><td></td></tr>
+<tr class="passed"><td></td><td>run out of fuel</td><td>passed</td><td></td></tr>
+<tr class="passed"><td></td><td>conformance suite, 896/896 passed</td><td>passed</td><td></td></tr>
 <tr><td>check-submission</td><td>PLDI 2027 submission</td><td>not run</td><td></td></tr>
 </table>
 <h2>Dependencies</h2>
-<p>Updated <time>2026-11-13 01:10</time> UTC.</p>
+<p>Updated <time>2026-11-13 07:29</time> UTC.</p>
 <img class="diagram" src="dependencies.svg" alt="Dependencies between repositories">
 <table class="key">
 <tr><td><svg width="36" height="10"><line x1="0" y1="5" x2="26" y2="5" stroke="#333333" stroke-width="1.5" stroke-dasharray="4 2"/><polygon points="26,1 36,5 26,9" fill="#333333"/></svg></td><td>Code generated from target</td></tr><tr><td><svg width="36" height="10"><line x1="0" y1="5" x2="26" y2="5" stroke="#333333" stroke-width="1.5" stroke-dasharray="4 2"/><polygon points="26,1 36,5 26,9" fill="#333333"/></svg></td><td>Isabelle session import</td></tr><tr><td><svg width="36" height="10"><line x1="0" y1="5" x2="26" y2="5" stroke="#333333" stroke-width="1.5"/><polygon points="26,1 36,5 26,9" fill="#333333"/></svg></td><td>Pin (moved by hand)</td></tr><tr><td><svg width="36" height="10"><line x1="0" y1="5" x2="26" y2="5" stroke="#333333" stroke-width="1.5" stroke-dasharray="6 4"/><polygon points="26,1 36,5 26,9" fill="#333333"/></svg></td><td>Follows target</td></tr><tr><td><svg width="36" height="10"><line x1="0" y1="5" x2="26" y2="5" stroke="#e00000" stroke-width="1.5"/><polygon points="26,1 36,5 26,9" fill="#e00000"/></svg></td><td>Pin behind latest release</td></tr>
@@ -67,10 +69,8 @@ table.integrity td:nth-child(2) { width: 4em; }
 <table>
 <tr><th>Repository</th><th>#</th><th>Title</th><th>Author</th><th>Review</th><th>Checks</th><th>Updated</th></tr>
 <tr><td>isabelle-python-codegen</td><td><a href="https://github.com/pure-py/isabelle-python-codegen/pull/23">#23</a></td><td class="title"><a href="https://github.com/pure-py/isabelle-python-codegen/pull/23" class="title">Formatting tweaks in tree weight example</a></td><td>dorchard</td><td>none</td><td>passing</td><td>2026-11-10</td></tr>
-<tr><td>org-workflow</td><td><a href="https://github.com/pure-py/org-workflow/pull/5">#5</a></td><td class="title"><a href="https://github.com/pure-py/org-workflow/pull/5" class="title">Passed checks in green, warnings in amber</a></td><td>rolyp-claude-bot</td><td>none</td><td>none</td><td>2026-11-12</td></tr>
-<tr><td>pldi2027</td><td><a href="https://github.com/pure-py/pldi2027/pull/44">#44</a></td><td class="title"><a href="https://github.com/pure-py/pldi2027/pull/44" class="title">Report unresolved references by name</a></td><td>rolyp-claude-bot</td><td>none</td><td>passing</td><td>2026-11-12</td></tr>
+<tr><td>pldi2027</td><td><a href="https://github.com/pure-py/pldi2027/pull/47">#47</a></td><td class="title"><a href="https://github.com/pure-py/pldi2027/pull/47" class="title">Bibliography in the paper repository</a></td><td>rolyp-claude-bot</td><td>none</td><td>passing</td><td>2026-11-13</td></tr>
 <tr><td>pldi2027</td><td><a href="https://github.com/pure-py/pldi2027/pull/31">#31</a></td><td class="title"><a href="https://github.com/pure-py/pldi2027/pull/31" class="title">Pin `pure-py-spec` submodule to tagged releases</a></td><td>antstei</td><td>none</td><td>failing</td><td>2026-11-11</td></tr>
-<tr><td>pure-py-spec</td><td><a href="https://github.com/pure-py/pure-py-spec/pull/363">#363</a></td><td class="title"><a href="https://github.com/pure-py/pure-py-spec/pull/363" class="title">Report unresolved references by name</a></td><td>rolyp-claude-bot</td><td>none</td><td>passing</td><td>2026-11-12</td></tr>
 </table>
 <h2>Draft pull requests</h2>
 <table>
@@ -82,14 +82,8 @@ table.integrity td:nth-child(2) { width: 4em; }
 <table class="integrity">
 <tr><th>Repository</th><th>Issue</th><th>Title</th></tr>
 <tr><td>pldi2027</td><td><a href="https://github.com/pure-py/pldi2027/issues/45">#45</a></td><td>Section 2.1 still mentions directory names (but the figure doesn&#x27;t)</td></tr>
-<tr><td>pldi2027</td><td><a href="https://github.com/pure-py/pldi2027/issues/46">#46</a></td><td>Mention later Python versions?</td></tr>
 <tr><td>pure-py-spec</td><td><a href="https://github.com/pure-py/pure-py-spec/issues/56">#56</a></td><td>Default arguments</td></tr>
 <tr><td>pure-py.github.io</td><td><a href="https://github.com/pure-py/pure-py.github.io/issues/35">#35</a></td><td>Automate version bump and build time check/test it works</td></tr>
-</table>
-<h3>Open issues without a Status</h3>
-<table class="integrity">
-<tr><th>Repository</th><th>Issue</th><th>Title</th></tr>
-<tr><td>pure-py-spec</td><td><a href="https://github.com/pure-py/pure-py-spec/issues/356">#356</a></td><td>Submission</td></tr>
 </table>
 <h3>Milestoned issues marked Proposed</h3>
 <table class="integrity">
