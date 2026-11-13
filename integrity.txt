@@ -19,6 +19,7 @@ pure-py-spec	#347	`@functools.cache`	pure-py-spec 1.1
 
 === Closed issues with open sub-issues ===
 Repository	Issue	Title	Open sub-issues
+pure-py-spec	#356	Submission	#292, pldi2027#46
 pure-py.github.io	#6	Integrate playground into website	#28
 
-6 issue(s) found.
+7 issue(s) found.
