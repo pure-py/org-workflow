@@ -1,4 +1,4 @@
-"""Parse the rules of a Makefile. A double-hash comment on the line above a rule describes the target of the rule."""
+"""Rules and target descriptions of a Makefile"""
 
 from __future__ import annotations
 
