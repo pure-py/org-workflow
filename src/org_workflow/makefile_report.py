@@ -1,11 +1,4 @@
-"""Run a make target prerequisite by prerequisite and report on each described target. Write a tab-separated line
-per described target to standard output, giving the name, description, outcome and detail. The outcome
-is passed, failed, warning, or not run when a prerequisite failed. The detail is the text printed by the recipe on
-lines starting "report:". A report line holding a tab gives the label and outcome of a check within the target, on a
-separate line with an empty target. The failure of a target with a description starting "Warning:" counts as a
-warning and does not stop the dependent targets. Write the make output to standard error and pass further arguments
-to make. Exit with failure if any target failed. With --check in place of a target, check that each workflow
-reporting on a target is named by the description of that target."""
+"""Run a make target and its prerequisites and report the outcome of each described target"""
 
 from __future__ import annotations
 
@@ -33,6 +26,7 @@ def reporting_workflows() -> list[tuple[pathlib.Path, str, str]]:
 
 
 def check_workflows(graph: dict[str, Rule]) -> None:
+    """Check that each workflow running the report on a target is named after the description of the target"""
     misnamed = [
         f"{workflow}: named {name!r}, not {graph[target].description!r}"
         for workflow, name, target in reporting_workflows()

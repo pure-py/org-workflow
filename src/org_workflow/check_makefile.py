@@ -1,5 +1,4 @@
-"""Check that every target with a recipe in the Makefile of the working directory has a description, except the
-special and internal targets starting with a dot. Exit with failure if any target lacks a description."""
+"""Check that every target with a recipe is described, except targets starting with a dot"""
 
 from __future__ import annotations
 
