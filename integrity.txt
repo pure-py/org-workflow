@@ -3,10 +3,13 @@ Checking project integrity for pure-py (project 1)...
 === Open issues missing from the project board ===
 Repository	Issue	Title
 pldi2027	#45	Section 2.1 still mentions directory names (but the figure doesn't)
+pldi2027	#52	Future for PurePy, with more 'mutation-like' behaviour
 pure-py-spec	#56	Default arguments
 pure-py.github.io	#35	Automate version bump and build time check/test it works
 
 === Open issues without a Status ===
+Repository	Issue	Title
+pure-py-spec	#364	NumPy support
 
 === Milestoned issues marked Proposed ===
 Repository	Issue	Title	Milestone
@@ -22,4 +25,4 @@ Repository	Issue	Title	Open sub-issues
 pure-py-spec	#356	Submission	#292, pldi2027#46
 pure-py.github.io	#6	Integrate playground into website	#28
 
-7 issue(s) found.
+9 issue(s) found.
