@@ -16,7 +16,7 @@ from typing import Any
 from diagram.edge import Edge
 
 SUBMISSION_WORKFLOW = "submission.yml"
-SUBMISSION_REPORT = "submission-report"
+SUBMISSION_REPORT = "makefile-report"
 SUBMISSION_TARGET = "check-submission"
 ISSUE = re.compile(r"(?P<repo>[\w.-]+)?#(?P<number>\d+)")
 FIELDS = "number,title,url,author,isDraft,updatedAt,reviewDecision,statusCheckRollup"
