@@ -4,6 +4,14 @@ description = "Dependency diagram, open pull requests and org-wide project integ
 version = "0.1.0"
 requires-python = ">=3.12"
 
+[project.scripts]
+check-makefile = "org_workflow.check_makefile:main"
+makefile-report = "org_workflow.makefile_report:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
 [dependency-groups]
 dev = [
     "mypy>=2.3.1",
@@ -12,7 +20,7 @@ dev = [
 
 [tool.mypy]
 strict = true
-mypy_path = "script"
+mypy_path = "script:src"
 
 [tool.ruff]
 line-length = 100

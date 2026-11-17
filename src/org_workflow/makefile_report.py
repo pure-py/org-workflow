@@ -1,13 +1,11 @@
-#!/usr/bin/env python3
-"""Report on a make target, run prerequisite by prerequisite: a tab-separated line per target described by
-a double-hash comment on the line above its rule, giving its name, the description, whether it passed, failed, gave a
-warning or wasn't run because a prerequisite failed, and the detail its recipe printed on lines starting "report:"; a
-report line with a tab separates the label and outcome of a check within the target, giving a line of its own with
-no target. A description starting "Warning:" marks a target whose failure is a warning, which does not stop the targets
-depending on it. Written to standard output, with the make output on standard error. Further arguments are passed
-to make. Exits with failure if any target failed. With --check instead of a target, checks that every
-target with a recipe is described, except the special and internal ones starting with a dot, and that every
-workflow reporting on a target is named by its description."""
+"""Run a make target prerequisite by prerequisite and report on each described target. Write a tab-separated line
+per described target to standard output, giving the name, description, outcome and detail. The outcome
+is passed, failed, warning, or not run when a prerequisite failed. The detail is the text printed by the recipe on
+lines starting "report:". A report line holding a tab gives the label and outcome of a check within the target, on a
+separate line with an empty target. The failure of a target with a description starting "Warning:" counts as a
+warning and does not stop the dependent targets. Write the make output to standard error and pass further arguments
+to make. Exit with failure if any target failed. With --check in place of a target, check that each workflow
+reporting on a target is named by the description of that target."""
 
 from __future__ import annotations
 
@@ -16,38 +14,12 @@ import pathlib
 import re
 import subprocess
 import sys
-from dataclasses import dataclass
 from functools import cache
 
-REPORT = re.compile(r"submission-report\.py\s+([\w.-]+)")
+from org_workflow.makefile import Rule, makefile_rules
+
+REPORT = re.compile(r"makefile-report\s+([\w.-]+)")
 NAME = re.compile(r"^name:\s*(.+)$", re.MULTILINE)
-RULE = re.compile(r"^(?P<target>[^\s:#=$%]+):(?!=)\s*(?P<prerequisites>.*)$")
-DESCRIPTION = "## "
-WARNING = "Warning: "
-
-
-@dataclass(frozen=True)
-class Rule:
-    description: str
-    warning: bool
-    prerequisites: list[str]
-    recipe: bool
-
-
-def rules(makefile: str) -> dict[str, Rule]:
-    lines = makefile.replace("\\\n", " ").splitlines()
-    result: dict[str, Rule] = {}
-    for i, line in enumerate(lines):
-        if match := RULE.match(line):
-            above = lines[i - 1] if i > 0 else ""
-            description = above.removeprefix(DESCRIPTION) if above.startswith(DESCRIPTION) else ""
-            prerequisites = [p for p in match["prerequisites"].split() if not p.startswith("$")]
-            recipe = i + 1 < len(lines) and lines[i + 1].startswith("\t")
-            warning = description.startswith(WARNING)
-            result[match["target"]] = Rule(
-                description.removeprefix(WARNING), warning, prerequisites, recipe
-            )
-    return result
 
 
 def reporting_workflows() -> list[tuple[pathlib.Path, str, str]]:
@@ -60,25 +32,22 @@ def reporting_workflows() -> list[tuple[pathlib.Path, str, str]]:
     return result
 
 
+def check_workflows(graph: dict[str, Rule]) -> None:
+    misnamed = [
+        f"{workflow}: named {name!r}, not {graph[target].description!r}"
+        for workflow, name, target in reporting_workflows()
+        if target not in graph or name != graph[target].description
+    ]
+    for line in misnamed:
+        print(line)
+    sys.exit(bool(misnamed))
+
+
 def main() -> None:
     root, *options = sys.argv[1:]
-    graph = rules(pathlib.Path("Makefile").read_text())
+    graph = makefile_rules()
     if root == "--check":
-        undescribed = [
-            t
-            for t, rule in graph.items()
-            if rule.recipe and not rule.description and not t.startswith(".")
-        ]
-        misnamed = [
-            f"{workflow}: named {name!r}, not {graph[target].description!r}"
-            for workflow, name, target in reporting_workflows()
-            if target not in graph or name != graph[target].description
-        ]
-        for target in undescribed:
-            print(f"{target}: no description")
-        for line in misnamed:
-            print(line)
-        sys.exit(bool(undescribed or misnamed))
+        check_workflows(graph)
     report: list[str] = []
     warnings = [t for t, rule in graph.items() if rule.warning]
 
@@ -130,7 +99,3 @@ def main() -> None:
     outcome = run(root)
     sys.stdout.write("".join(line + "\n" for line in report))
     sys.exit(outcome not in ("passed", "warning"))
-
-
-if __name__ == "__main__":
-    main()
