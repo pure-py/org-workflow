@@ -15,5 +15,5 @@ def main() -> None:
         if rule.recipe and not rule.description and not target.startswith(".")
     ]
     for target in undescribed:
-        print(f"{target}: no description")
+        print(f"{target}: not described")
     sys.exit(bool(undescribed))

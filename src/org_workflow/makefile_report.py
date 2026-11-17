@@ -58,7 +58,7 @@ def main() -> None:
             return "passed"
         rule = graph[target]
         assert rule.description or not rule.recipe or target.startswith("."), (
-            f"{target} has no description"
+            f"{target} is not described"
         )
         details: list[str] = []
         checks: list[str] = []
